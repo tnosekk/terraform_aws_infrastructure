@@ -17,65 +17,82 @@ resource "aws_security_group" "web_server" {
   name_prefix = "${var.project_name}-${var.environment}-web-"
   vpc_id      = var.vpc_id
 
-  ingress {
-    description = "HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "HTTPS"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "${var.project_name}-${var.environment}-web-sg"
   }
 }
 
+resource "aws_vpc_security_group_ingress_rule" "web_server_http" {
+  description       = "HTTP"
+  security_group_id = aws_security_group.web_server.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 80
+  to_port     = 80
+  ip_protocol = "tcp"
+
+}
+
+resource "aws_vpc_security_group_ingress_rule" "web_server_https" {
+  description       = "HTTPS"
+  security_group_id = aws_security_group.web_server.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 443
+  to_port     = 443
+  ip_protocol = "tcp"
+
+}
+
+resource "aws_vpc_security_group_egress_rule" "web_server" {
+  security_group_id = aws_security_group.web_server.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 0
+  to_port     = 0
+  ip_protocol = -1
+
+}
 
 resource "aws_security_group" "app_server" {
   name_prefix = "${var.project_name}-${var.environment}-app-"
   vpc_id      = var.vpc_id
 
-  ingress {
-    description = "HTTP from Web Server"
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = [aws_security_group.web_server.id]
-  }
-
-  ingress {
-    description = "SSH from Web Server"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [aws_security_group.web_server.id]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "${var.project_name}-${var.environment}-app-sg"
   }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "app_server_http" {
+  description       = "HTTP"
+  security_group_id = aws_security_group.app_server.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 8080
+  to_port     = 8080
+  ip_protocol = "tcp"
+
+}
+
+resource "aws_vpc_security_group_ingress_rule" "app_server_ssh" {
+  description       = "SSH form web server"
+  security_group_id = aws_security_group.app_server.id
+
+  cidr_ipv4   = aws_security_group.web_server.id
+  from_port   = 22
+  to_port     = 22
+  ip_protocol = "tcp"
+
+}
+
+resource "aws_vpc_security_group_egress_rule" "app_server" {
+  security_group_id = aws_security_group.app_server.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 0
+  to_port     = 0
+  ip_protocol = -1
+
 }
 
 resource "aws_instance" "web_server" {
