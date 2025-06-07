@@ -13,8 +13,8 @@ provider "aws" {
 
   shared_config_files      = ["~/.aws/config"]
   shared_credentials_files = ["~/.aws/credentials"]
-  profile = "default"
-  
+  profile                  = "default"
+
   default_tags {
     tags = {
       Project     = var.project_name
@@ -36,32 +36,32 @@ module "vpc" {
   availability_zones   = var.availability_zones
 }
 
-# module "iam" {
-# source = "./modules/iam"
-# 
-# project_name = var.project_name
-# environment = var.environment
-# }
-# 
-# module "s3" {
-# source = "./modules/s3"
-# 
-# project_name = var.project_name
-# environment = var.environment
-# bucket_name = var.s3_bucket_name
-# }
-# 
-# module "ec2" {
-# source = "./modules/ec2"
-# 
-# project_name = var.project_name
-# environment = var.environment
-# vpc_id = module.vpc.vpc_id
-# public_subnet_ids = module.vpc.public_subnet_ids
-# private_subnet_ids = module.vpc.private_subnet_ids
-# instance_type = var.instance_type
-# key_pair_name = var.key_pair_name
-# iam_instance_profile = module.iam.ec2_insance_profile_name
-# 
-# depends_on = [ module.vpc, module.iam ]
-# }
+module "iam" {
+  source = "./modules/iam"
+
+  project_name = var.project_name
+  environment  = var.environment
+}
+
+module "s3" {
+  source = "./modules/s3"
+
+  project_name = var.project_name
+  environment  = var.environment
+  bucket_name  = var.s3_bucket_name
+}
+
+module "ec2" {
+  source = "./modules/ec2"
+
+  project_name         = var.project_name
+  environment          = var.environment
+  vpc_id               = module.vpc.vpc_id
+  public_subnet_ids    = module.vpc.public_subnet_ids
+  private_subnet_ids   = module.vpc.private_subnet_ids
+  instance_type        = var.instance_type
+  key_pair_name        = var.key_pair_name
+  iam_instance_profile = module.iam.ec2_insance_profile_name
+
+  depends_on = [module.vpc, module.iam]
+}
