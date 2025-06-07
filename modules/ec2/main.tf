@@ -44,6 +44,15 @@ resource "aws_vpc_security_group_ingress_rule" "web_server_https" {
 
 }
 
+resource "aws_vpc_security_group_ingress_rule" "web_server_ssh" {
+  security_group_id = aws_security_group.web_server.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 22
+  to_port     = 22
+  ip_protocol = "tcp"
+}
+
 resource "aws_vpc_security_group_egress_rule" "web_server" {
   security_group_id = aws_security_group.web_server.id
 
@@ -53,6 +62,8 @@ resource "aws_vpc_security_group_egress_rule" "web_server" {
   ip_protocol = -1
 
 }
+
+
 
 resource "aws_security_group" "app_server" {
   name_prefix = "${var.project_name}-${var.environment}-app-"
@@ -78,10 +89,10 @@ resource "aws_vpc_security_group_ingress_rule" "app_server_ssh" {
   description       = "SSH form web server"
   security_group_id = aws_security_group.app_server.id
 
-  referenced_security_group_id = aws_security_group.web_server.id 
-  from_port   = 22
-  to_port     = 22
-  ip_protocol = "tcp"
+  referenced_security_group_id = aws_security_group.web_server.id
+  from_port                    = 22
+  to_port                      = 22
+  ip_protocol                  = "tcp"
 
 }
 
