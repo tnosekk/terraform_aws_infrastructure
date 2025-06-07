@@ -18,7 +18,6 @@
 
     ![iam-graph](/graphs/iam_graph.png)
 
-
 ## Prerequisites
 
 - AWS account
