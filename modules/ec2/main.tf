@@ -78,7 +78,7 @@ resource "aws_vpc_security_group_ingress_rule" "app_server_ssh" {
   description       = "SSH form web server"
   security_group_id = aws_security_group.app_server.id
 
-  cidr_ipv4   = aws_security_group.web_server.id
+  referenced_security_group_id = aws_security_group.web_server.id 
   from_port   = 22
   to_port     = 22
   ip_protocol = "tcp"

@@ -4,7 +4,7 @@ yum update -y
 yum install -y python3 python3-pip
 
 mkdir -p /opt/app
-cat > /opt/app/app.py << EOF
+cat >/opt/app/app.py <<EOF
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     server.serve_forever()
 EOF
 
-cat > /etc/systemd/system/app.service << EOF
+cat >/etc/systemd/system/app.service <<EOF
 [Unit]
 Description=Python App Server
 After=network.target
