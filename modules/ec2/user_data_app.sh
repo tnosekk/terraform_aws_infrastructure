@@ -8,7 +8,7 @@ cat >/opt/app/app.py <<EOF
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 
-class AppHandler(BaseHTTPRequestsHandler):
+class AppHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
@@ -23,8 +23,8 @@ class AppHandler(BaseHTTPRequestsHandler):
         self.wfile.write(json.dumps(response).encode())
 
 if __name__ == '__main__':
-    sever = HTTPServer(('0.0.0.0', 8080), AppHandler)
-    print('App server running on port 8080)
+    server = HTTPServer(('0.0.0.0', 8080), AppHandler)
+    print('App server running on port 8080')
     server.serve_forever()
 EOF
 
